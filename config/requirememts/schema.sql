@@ -37,10 +37,9 @@ CREATE TABLE AdminRememberTokens (
 CREATE TABLE Customers (
     CustomerID INT AUTO_INCREMENT PRIMARY KEY,
     FullName VARCHAR(255) NOT NULL,
-    Email VARCHAR(255) UNIQUE NOT NULL,
+    Email VARCHAR(255) NULL,
     PhoneNumber VARCHAR(15) NOT NULL,
     Address TEXT,
-    AadharNumber VARCHAR(20) UNIQUE,
     DOB DATE,
     Gender ENUM('Male', 'Female', 'Other'),
     Status ENUM('Active', 'Inactive') DEFAULT 'Active',
@@ -193,6 +192,8 @@ CREATE TABLE backup (
     FileURL VARCHAR(255) NOT NULL,
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE Customers DROP COLUMN AadharNumber;
 
 
 

@@ -1,0 +1,303 @@
+/*
+  Custom Admin Panel Styles
+  Place your custom CSS here. This file will be included in all admin pages.
+*/
+
+.sidebar-premium {
+  width: 250px;
+  background: linear-gradient(135deg, #003399 0%, #6a82fb 100%);
+  min-height: 100vh;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 32px 0 0 0;
+  box-shadow: 2px 0 16px 0 rgba(137,138,196,0.10);
+  z-index: 100;
+}
+.sidebar-premium .sidebar-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-left: 32px;
+  margin-bottom: 36px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar-premium nav {
+  width: 100%;
+}
+.sidebar-premium nav a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 92%;
+  margin: 0 0 10px 0;
+  padding: 14px 20px 14px 32px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.08rem;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+  border-radius: 0 30px 30px 0;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+  box-sizing: border-box;
+}
+.sidebar-premium nav a:hover, .sidebar-premium nav a.active {
+  background: #fff2e0;
+  color: #003399;
+  border-left: 4px solid #003399;
+  border-radius: 0 30px 30px 0;
+  font-weight: 700;
+  box-shadow: 0 2px 8px 0 rgba(137,138,196,0.10);
+  width: 100%;
+  margin: 0 0 10px 0;
+  padding: 14px 20px 14px 32px;
+}
+.sidebar-premium .sidebar-footer {
+  margin-top: auto;
+  width: 100%;
+  padding: 24px 0 16px 0;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #e0e0e0;
+}
+@media (max-width: 900px) {
+  .sidebar-premium {
+    position: relative;
+    width: 100%;
+    min-height: unset;
+    flex-direction: row;
+    padding: 0;
+    box-shadow: none;
+  }
+  .sidebar-premium nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+  }
+  .sidebar-premium nav a {
+    padding: 12px 10px;
+    font-size: 1rem;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 20px;
+    margin: 0 4px 0 4px;
+    width: auto;
+  }
+  .sidebar-premium nav a:hover, .sidebar-premium nav a.active {
+    background: #a2aadb;
+    color: #003399;
+    border-bottom: 2px solid #003399;
+    border-left: none;
+    border-radius: 20px;
+    width: auto;
+    margin: 0 4px 0 4px;
+    padding: 12px 10px;
+  }
+  .sidebar-premium .sidebar-title, .sidebar-premium .sidebar-footer {
+    display: none;
+  }
+}
+
+/* General Body and Layout */
+body { background: #f4f6fb; font-family: 'Segoe UI', sans-serif; margin: 0; }
+.main-container { margin-left: 250px; padding: 32px 24px; min-height: 100vh; }
+@media (max-width: 900px) { .main-container { margin-left: 0; padding: 12px 2px; } }
+
+/* Premium Card Styles for View, Add, Edit, Delete */
+.container {
+  max-width: 500px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px 0 rgba(2,0,36,0.08);
+  padding: 32px;
+}
+.title {
+  font-size: 28px;
+  color: #2d3a4b;
+  margin-bottom: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.info-row {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.label {
+  color: #888;
+  font-size: 15px;
+  min-width: 120px;
+  display: inline-block;
+}
+.value {
+  font-size: 18px;
+  color: #222;
+  font-weight: 500;
+  word-break: break-all;
+}
+.back-btn {
+  display: inline-block;
+  margin-top: 24px;
+  padding: 10px 28px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background 0.2s;
+  border: none;
+}
+.back-btn:hover {
+  background: #0056b3;
+}
+
+/* Premium Form Styles (Add/Edit) */
+.form-group {
+  margin-bottom: 16px;
+}
+label {
+  color: #888;
+  font-size: 15px;
+  display: block;
+  margin-bottom: 4px;
+}
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+.btn {
+  margin-top: 18px;
+  padding: 10px 28px;
+  background: #007bff;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn:hover {
+  background: #0056b3;
+}
+.msg-success {
+  color: #2ecc40;
+  margin-bottom: 12px;
+}
+.msg-error {
+  color: #e74c3c;
+  margin-bottom: 12px;
+}
+
+/* Delete Card Styles */
+.container .title {
+  color: #e74c3c;
+}
+.container .desc {
+  color: #444;
+  margin-bottom: 24px;
+}
+.btn-danger {
+  background: #e74c3c;
+  color: #fff;
+}
+.btn-danger:hover {
+  background: #c0392b;
+}
+.btn-secondary {
+  background: #888;
+  color: #fff;
+}
+.btn-secondary:hover {
+  background: #555;
+}
+
+/* Table, Topbar, and Status Styles (already present) */
+.table-responsive { border-radius: 12px; box-shadow: 0 2px 8px 0 rgba(2,0,36,0.06); background: #fff; }
+.topbar-premium { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.topbar-premium h2 { font-size: 2rem; color: #2d3a4b; margin: 0; font-weight: 700; }
+.action-btns .btn { margin-left: 8px; }
+.status-active { color: #43b581; background: #eafaf1; padding: 4px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; display: inline-block; }
+.status-inactive { color: #e74c3c; background: #fdeaea; padding: 4px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; display: inline-block; } 
+
+/* Compact Icon-Only Action Buttons (Table Actions) */
+.action-btn-group {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #e0f7fa 0%, #fff 100%);
+  color: #17a2b8;
+  box-shadow: 0 2px 8px 0 rgba(23,162,184,0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+.action-btn i {
+  font-size: 1.1em;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+}
+.action-btn.edit {
+  background: linear-gradient(135deg, #fffbe6 0%, #fff 100%);
+  color: #ffc107;
+  box-shadow: 0 2px 8px 0 rgba(255,193,7,0.08);
+}
+.action-btn.delete {
+  background: linear-gradient(135deg, #ffeaea 0%, #fff 100%);
+  color: #e74c3c;
+  box-shadow: 0 2px 8px 0 rgba(231,76,60,0.08);
+}
+.action-btn:hover,
+.action-btn.edit:hover,
+.action-btn.delete:hover {
+  background: inherit;
+  color: inherit;
+  box-shadow: inherit;
+  transform: none;
+  filter: none;
+}
+
+/* Make all buttons in the group the same width */
+.action-btn-group .action-btn {
+  flex: 1 1 0;
+}
+
+/* Add a small gap between each row of button groups */
+tr + tr .action-btn-group {
+  margin-top: 8px;
+}
+
+/* Export Button (Green) */
+.btn-export {
+  background: #43b581 !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px 0 rgba(67,181,129,0.08);
+  transition: background 0.2s;
+}
+.btn-export:hover {
+  background: #2e8b57 !important;
+  color: #fff !important;
+} 
