@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Database connection
 include_once '../../config/database.php';
 
@@ -120,10 +121,14 @@ $result = $stmt->get_result();
                   <div class="action-btn-group">
                     <a href="view.php?id=<?= $row['AdminID'] ?>" class="action-btn" title="View"><i class="fa fa-eye"></i></a>
                     <a href="edit.php?id=<?= $row['AdminID'] ?>" class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></a>
-                    <form method="post" action="index.php" style="display:inline;">
-                      <input type="hidden" name="delete_admin_id" value="<?= $row['AdminID'] ?>">
-                      <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Are you sure you want to delete this admin?');"><i class="fa fa-trash"></i></button>
-                    </form>
+                    <?php if ($_SESSION['admin_id'] != $row['AdminID']): ?>
+                      <form method="post" action="index.php" style="display:inline;">
+                        <input type="hidden" name="delete_admin_id" value="<?= $row['AdminID'] ?>">
+                        <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Are you sure you want to delete this admin?');">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </form>
+                    <?php endif; ?>
                   </div>
                 </td>
               </tr>
