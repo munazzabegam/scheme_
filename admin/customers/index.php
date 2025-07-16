@@ -71,6 +71,9 @@ $result = $stmt->get_result();
         <div class="col-md-2">
           <button class="btn btn-outline-primary w-100" type="submit"><i class="fa fa-filter"></i> Apply Filters</button>
         </div>
+        <div class="col-md-2">
+          <a href="index.php" class="btn btn-sm ms-2" style="background:transparent !important; color:inherit; border:1px solid #ccc;"><i class="fa fa-times"></i> Clear Filters</a>
+        </div>
   </form>
       <?php if (isset($_GET['added'])): ?>
         <div class="alert alert-success">Customer added successfully!</div>
@@ -81,7 +84,6 @@ $result = $stmt->get_result();
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
         <tr>
-          <th>ID</th>
           <th>Name</th>
           <th>Email</th>
           <th>Contact</th>
@@ -94,7 +96,6 @@ $result = $stmt->get_result();
       <?php if ($result && $result->num_rows > 0): ?>
         <?php while($row = $result->fetch_assoc()): ?>
           <tr>
-            <td><?= htmlspecialchars($row['CustomerID']) ?></td>
             <td><?= htmlspecialchars($row['FullName']) ?></td>
             <td><?= htmlspecialchars($row['Email']) ?></td>
             <td><?= htmlspecialchars($row['PhoneNumber']) ?></td>

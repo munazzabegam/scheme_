@@ -11,6 +11,9 @@
     <a href="/scheme_/admin/dashboard/index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' && basename(dirname($_SERVER['PHP_SELF'])) == 'dashboard' ? 'active' : '' ?>">
       <i class="fa-solid fa-chart-line"></i> Dashboard
     </a>
+    <a href="/scheme_/admin/user/index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' && basename(dirname($_SERVER['PHP_SELF'])) == 'user' ? 'active' : '' ?>">
+      <i class="fa-solid fa-user"></i> Users
+    </a>
     <a href="/scheme_/admin/customers/index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' && basename(dirname($_SERVER['PHP_SELF'])) == 'customers' ? 'active' : '' ?>">
       <i class="fa-solid fa-users"></i> Customers
     </a>
