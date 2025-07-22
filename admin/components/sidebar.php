@@ -17,13 +17,13 @@
     <a href="/scheme_/admin/customers/index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' && basename(dirname($_SERVER['PHP_SELF'])) == 'customers' ? 'active' : '' ?>">
       <i class="fa-solid fa-users"></i> Customers
     </a>
-    <a href="/admin/payments.php" class="<?= basename($_SERVER['PHP_SELF']) == 'payments.php' ? 'active' : '' ?>">
+    <a href="/scheme_/admin/payments/index.php" class="<?= basename(dirname($_SERVER['PHP_SELF'])) == 'payments' ? 'active' : '' ?>">
       <i class="fa-solid fa-credit-card"></i> Payments
     </a>
-    <a href="/admin/schemes.php" class="<?= basename($_SERVER['PHP_SELF']) == 'schemes.php' ? 'active' : '' ?>">
+    <a href="/scheme_/admin/schemes/index.php" class="<?= basename(dirname($_SERVER['PHP_SELF'])) == 'schemes' ? 'active' : '' ?>">
       <i class="fa-solid fa-gift"></i> Schemes
     </a>
-    <a href="/admin/installments.php" class="<?= basename($_SERVER['PHP_SELF']) == 'installments.php' ? 'active' : '' ?>">
+    <a href="/scheme_/admin/installments/index.php" class="<?= basename(dirname($_SERVER['PHP_SELF'])) == 'installments' ? 'active' : '' ?>">
       <i class="fa-solid fa-coins"></i> Installments
     </a>
     <a href="/scheme_/admin/logout.php" class="<?= basename($_SERVER['PHP_SELF']) == 'logout.php' ? 'active' : '' ?>">
