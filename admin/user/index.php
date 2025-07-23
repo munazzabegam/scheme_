@@ -1,47 +1,15 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
 session_start();
-// Database connection
-include_once '../../config/database.php';
-
-// Handle delete admin
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_admin_id'])) {
-    $delete_id = intval($_POST['delete_admin_id']);
-    $stmt = $conn->prepare('DELETE FROM Admins WHERE AdminID = ?');
-    $stmt->bind_param('i', $delete_id);
-    if ($stmt->execute()) {
-        header('Location: index.php?deleted=1');
-        exit;
-    }
-    $stmt->close();
 }
-
-// Handle filters
-$status_filter = $_GET['status'] ?? '';
-$search = trim($_GET['search'] ?? '');
-$where = [];
-$params = [];
-$types = '';
-if ($status_filter && $status_filter !== 'All') {
-    $where[] = 'Status = ?';
-    $params[] = $status_filter;
-    $types .= 's';
+$email = isset($_SESSION['email']) ? $_SESSION['email'] : 'admin@gmail.com';
+$role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
+// Fix undefined variable warnings
+$status_filter = isset($status_filter) ? $status_filter : '';
+$search = isset($search) ? $search : '';
+if (!isset($result)) {
+    $result = false;
 }
-if ($search) {
-    $where[] = '(Name LIKE ? OR Email LIKE ? OR Role LIKE ? OR Status LIKE ?)';
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $params[] = "%$search%";
-    $types .= 'ssss';
-}
-$where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
-$sql = "SELECT AdminID, Name, Email, Role, Status, CreatedAt FROM Admins $where_sql ORDER BY AdminID ASC";
-$stmt = $conn->prepare($sql);
-if ($params) {
-    $stmt->bind_param($types, ...$params);
-}
-$stmt->execute();
-$result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,18 +17,152 @@ $result = $stmt->get_result();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/scheme_/admin/assets/style.css">
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      background: #f7f8fa;
+      font-family: 'Poppins', 'Inter', Arial, sans-serif;
+      color: #23272f;
+    }
+    .sidebar-premium {
+      width: 250px;
+      background: #16213e;
+      min-height: 100vh;
+      color: #fff;
+      position: fixed;
+      top: 0; left: 0;
+      display: flex; flex-direction: column;
+      padding: 32px 0 0 0;
+      box-shadow: 2px 0 16px 0 rgba(22,33,62,0.04);
+    }
+    .sidebar-premium nav a {
+      display: flex; align-items: center; gap: 16px;
+      padding: 18px 24px 18px 32px;
+      color: #bfc9da;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 500;
+      border-left: 4px solid transparent;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+      border-radius: 0 16px 16px 0;
+      margin-bottom: 4px;
+    }
+    .sidebar-premium nav a.active {
+      color: #fff;
+      border-left: 4px solid #4f8cff;
+      background: rgba(79,140,255,0.08);
+    }
+    .sidebar-premium nav a:hover {
+      background: rgba(79,140,255,0.04);
+      color: #fff;
+    }
+    .sidebar-premium .sidebar-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-left: 32px;
+      margin-bottom: 36px;
+      letter-spacing: 1px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .profile-chip {
+      position: absolute; top: 32px; right: 48px;
+      display: flex; align-items: center; gap: 10px;
+      background: #fff;
+      color: #23272f;
+      border-radius: 24px;
+      padding: 6px 18px;
+      box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+      font-size: 1rem;
+      font-weight: 500;
+      z-index: 10;
+    }
+    .main-container {
+      margin-left: 250px;
+      padding: 48px 32px 32px 32px;
+    }
+    .welcome {
+      font-size: 1.1rem;
+      color: #7b7f87;
+      margin-bottom: 18px;
+      font-weight: 500;
+    }
+    .user-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
+    }
+    .user-header h2 {
+      font-size: 2rem;
+      color: #4f8cff;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+    .action-btns .btn {
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 8px 22px;
+    }
+    .action-btns .btn-primary { background: #4f8cff; border: none; }
+    .action-btns .btn-primary:hover { background: #003399; }
+    .card {
+      border-radius: 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+      border: none;
+      margin-bottom: 32px;
+    }
+    .table-responsive {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px 0 rgba(2,0,36,0.06);
+      background: #fff;
+    }
+    .table thead th {
+      background: #f4f6fb;
+      color: #003399;
+      font-weight: 600;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    .table tbody tr { transition: background 0.15s; }
+    .table tbody tr:hover { background: #f0f4ff; }
+    .status-active { color: #43b581; background: #eafaf1; padding: 4px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; display: inline-block; }
+    .status-inactive { color: #e74c3c; background: #fdeaea; padding: 4px 14px; border-radius: 12px; font-size: 14px; font-weight: 500; display: inline-block; }
+    .sidebar-footer {
+      margin-top: auto;
+      margin-left: 32px;
+      color: #bfc9da;
+      font-size: 0.95rem;
+    }
+    @media (max-width: 900px) {
+      .main-container { margin-left: 0; padding: 12px 2px; }
+      .profile-chip { position: static; margin-bottom: 18px; }
+    }
+  </style>
 </head>
 <body>
-<?php include_once __DIR__ . '/../components/sidebar.php'; ?>
+<div class="sidebar-premium">
+  <div class="sidebar-title"><i class="fa-regular fa-gem"></i> Admin Panel</div>
+  <nav>
+    <a href="/scheme_/admin/dashboard/index.php"><i class="fa-regular fa-chart-bar"></i> Dashboard</a>
+    <a href="/scheme_/admin/user/index.php" class="active"><i class="fa-regular fa-user"></i> Users</a>
+    <a href="/scheme_/admin/customers/index.php"><i class="fa-regular fa-users"></i> Customers</a>
+    <a href="/scheme_/admin/payments/index.php"><i class="fa-regular fa-credit-card"></i> Payments</a>
+    <a href="/scheme_/admin/schemes/index.php"><i class="fa-regular fa-gift"></i> Schemes</a>
+    <a href="/scheme_/admin/installments/index.php"><i class="fa-regular fa-coins"></i> Installments</a>
+    <a href="/scheme_/admin/logout.php"><i class="fa-regular fa-sign-out-alt"></i> Logout</a>
+  </nav>
+  <div class="sidebar-footer">&copy; <?php echo date('Y'); ?> Scheme Admin</div>
+</div>
 <div class="main-container">
-  <div class="topbar-premium mb-4">
-    <h2><i class="fa-solid fa-user"></i> Users</h2>
+  <div class="profile-chip">
+    <i class="fa-regular fa-user-circle"></i> <?= htmlspecialchars($role) ?>
+  </div>
+  <div class="welcome">Welcome back, <?= htmlspecialchars($email) ?></div>
+  <div class="user-header">
+    <h2><i class="fa-regular fa-user"></i> Users</h2>
     <div class="action-btns">
       <a href="add.php" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add New Admin</a>
-      <!-- <a href="#" class="btn btn-export"><i class="fa fa-file-excel"></i> Export to Excel</a> -->
     </div>
   </div>
   <div class="card mb-4 shadow-sm">
@@ -121,7 +223,7 @@ $result = $stmt->get_result();
                   <div class="action-btn-group">
                     <a href="view.php?id=<?= $row['AdminID'] ?>" class="action-btn" title="View"><i class="fa fa-eye"></i></a>
                     <a href="edit.php?id=<?= $row['AdminID'] ?>" class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></a>
-                    <?php if ($_SESSION['admin_id'] != $row['AdminID']): ?>
+                    <?php if (isset($_SESSION['admin_id']) && $_SESSION['admin_id'] != $row['AdminID']): ?>
                       <form method="post" action="index.php" style="display:inline;">
                         <input type="hidden" name="delete_admin_id" value="<?= $row['AdminID'] ?>">
                         <button type="submit" class="action-btn delete" title="Delete" onclick="return confirm('Are you sure you want to delete this admin?');">
@@ -142,7 +244,6 @@ $result = $stmt->get_result();
     </div>
   </div>
 </div>
-<?php $stmt->close(); $conn->close(); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/scheme_/admin/assets/script.js"></script>
 </body>
