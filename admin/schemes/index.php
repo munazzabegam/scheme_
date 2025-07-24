@@ -114,65 +114,63 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
 <body>
 <?php include __DIR__ . '/../components/sidebar.php'; ?>
 <div class="main-container">
-  <div class="container">
-    <div class="topbar-premium d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-0">Scheme Management</h2>
-      <a href="add.php" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Scheme</a>
+  <div class="topbar-premium d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Scheme Management</h2>
+    <a href="add.php" class="btn btn-primary"><i class="fa fa-plus"></i> Add New Scheme</a>
+  </div>
+  <form class="row g-2 mb-4 align-items-center" method="get" action="">
+    <div class="col-md-7 col-12 mb-2 mb-md-0">
+      <input type="text" name="search" class="form-control" placeholder="Search schemes..." value="<?= htmlspecialchars($search) ?>">
     </div>
-    <form class="row g-2 mb-4" method="get" action="">
-      <div class="col-md-6">
-        <input type="text" name="search" class="form-control" placeholder="Search schemes..." value="<?= htmlspecialchars($search) ?>">
-      </div>
-      <div class="col-md-2">
-        <select name="status" class="form-select">
-          <option value="All"<?= $status_filter === 'All' ? ' selected' : '' ?>>All Statuses</option>
-          <option value="Active"<?= $status_filter === 'Active' ? ' selected' : '' ?>>Active</option>
-          <option value="Closed"<?= $status_filter === 'Closed' ? ' selected' : '' ?>>Closed</option>
-          <option value="Upcoming"<?= $status_filter === 'Upcoming' ? ' selected' : '' ?>>Upcoming</option>
-        </select>
-      </div>
-      <div class="col-md-2">
-        <button type="submit" class="btn btn-secondary w-100"><i class="fa fa-search"></i> Search</button>
-      </div>
-    </form>
-    <?php if ($result->num_rows > 0): ?>
-      <?php while ($row = $result->fetch_assoc()): ?>
-        <div class="card mb-4 p-4 shadow-sm">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="mb-0"><?= htmlspecialchars($row['SchemeName']) ?></h4>
-            <div class="action-btn-group">
-              <a href="view.php?id=<?= $row['SchemeID'] ?>" class="btn btn-info action-btn"><i class="fa fa-eye"></i> View</a>
-              <a href="edit.php?id=<?= $row['SchemeID'] ?>" class="btn btn-success action-btn"><i class="fa fa-edit"></i> Edit</a>
-            </div>
-          </div>
-          <div class="row mb-2">
-            <div class="col-md-3">
-              <div class="label">Monthly Payment</div>
-              <div class="value">₹<?= number_format($row['MonthlyPayment'], 2) ?></div>
-            </div>
-            <div class="col-md-3">
-              <div class="label">Total Payments</div>
-              <div class="value"><?= $row['TotalPayments'] ?></div>
-            </div>
-            <div class="col-md-3">
-              <div class="label">Created Date</div>
-              <div class="value"><?= date('M d, Y', strtotime($row['CreatedAt'])) ?></div>
-            </div>
-          </div>
-          <div class="mb-2">
-            <?= nl2br(htmlspecialchars($row['Description'])) ?>
-          </div>
-          <div class="d-flex gap-2 mt-2">
-            <span class="status-active">Active</span>
-            <span class="badge bg-primary">2123 Active Subscriptions</span>
-            <span class="badge bg-secondary">18 Installments</span>
+    <div class="col-md-3 col-6 mb-2 mb-md-0">
+      <select name="status" class="form-select">
+        <option value="All"<?= $status_filter === 'All' ? ' selected' : '' ?>>All Statuses</option>
+        <option value="Active"<?= $status_filter === 'Active' ? ' selected' : '' ?>>Active</option>
+        <option value="Closed"<?= $status_filter === 'Closed' ? ' selected' : '' ?>>Closed</option>
+        <option value="Upcoming"<?= $status_filter === 'Upcoming' ? ' selected' : '' ?>>Upcoming</option>
+      </select>
+    </div>
+    <div class="col-md-2 col-6">
+      <button type="submit" class="btn btn-secondary w-100"><i class="fa fa-search"></i> Search</button>
+    </div>
+  </form>
+  <?php if ($result->num_rows > 0): ?>
+    <?php while ($row = $result->fetch_assoc()): ?>
+      <div class="card mb-4 p-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+          <h4 class="mb-0"><?= htmlspecialchars($row['SchemeName']) ?></h4>
+          <div class="action-btn-group">
+            <a href="view.php?id=<?= $row['SchemeID'] ?>" class="btn btn-info action-btn"><i class="fa fa-eye"></i> View</a>
+            <a href="edit.php?id=<?= $row['SchemeID'] ?>" class="btn btn-success action-btn"><i class="fa fa-edit"></i> Edit</a>
           </div>
         </div>
-      <?php endwhile; ?>
-    <?php else: ?>
-      <div class="alert alert-info text-center">No schemes found.</div>
-    <?php endif; ?>
-  </div>
+        <div class="row mb-2">
+          <div class="col-md-3 col-6 mb-2 mb-md-0">
+            <div class="label">Monthly Payment</div>
+            <div class="value">₹<?= number_format($row['MonthlyPayment'], 2) ?></div>
+          </div>
+          <div class="col-md-3 col-6 mb-2 mb-md-0">
+            <div class="label">Total Payments</div>
+            <div class="value"><?= $row['TotalPayments'] ?></div>
+          </div>
+          <div class="col-md-3 col-12">
+            <div class="label">Created Date</div>
+            <div class="value"><?= date('M d, Y', strtotime($row['CreatedAt'])) ?></div>
+          </div>
+        </div>
+        <div class="mb-2">
+          <?= nl2br(htmlspecialchars($row['Description'])) ?>
+        </div>
+        <div class="d-flex flex-wrap gap-2 mt-2 align-items-center">
+          <span class="status-active">Active</span>
+          <span class="badge bg-primary">2123 Active Subscriptions</span>
+          <span class="badge bg-secondary">18 Installments</span>
+        </div>
+      </div>
+    <?php endwhile; ?>
+  <?php else: ?>
+    <div class="alert alert-info text-center">No schemes found.</div>
+  <?php endif; ?>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/scheme_/admin/assets/script.js"></script>

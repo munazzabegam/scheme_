@@ -62,41 +62,47 @@ $conn->close();
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="title">Edit Admin</div>
+<?php include __DIR__ . '/../components/sidebar.php'; ?>
+<div class="main-container">
+  <div class="profile-chip">
+    <i class="fa-regular fa-user-circle"></i>
+  </div>
+  <div class="form-title"><i class="fa fa-user-edit"></i> Edit Admin</div>
+  <div class="card-form" style="background:#fff; border-radius:16px; box-shadow:0 8px 32px 0 rgba(2,0,36,0.08); padding:32px;">
     <?php if ($error): ?><div class="msg-error"><?= $error ?></div><?php endif; ?>
     <form method="post">
       <div class="form-group">
-        <label>Name</label>
-        <input name="name" required value="<?= htmlspecialchars($name) ?>" />
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required value="<?= htmlspecialchars($name) ?>" />
       </div>
       <div class="form-group">
-        <label>Email</label>
-        <input name="email" type="email" required value="<?= htmlspecialchars($email) ?>" />
+        <label class="form-label">Email</label>
+        <input name="email" type="email" class="form-control" required value="<?= htmlspecialchars($email) ?>" />
       </div>
       <div class="form-group">
-        <label>Password (leave blank to keep current)</label>
-        <input name="password" type="password" />
+        <label class="form-label">Password (leave blank to keep current)</label>
+        <input name="password" type="password" class="form-control" />
       </div>
       <div class="form-group">
-        <label>Role</label>
-        <select name="role">
+        <label class="form-label">Role</label>
+        <select name="role" class="form-select">
           <option value="Verifier"<?= $role === 'Verifier' ? ' selected' : '' ?>>Verifier</option>
           <option value="SuperAdmin"<?= $role === 'SuperAdmin' ? ' selected' : '' ?>>SuperAdmin</option>
           <option value="Editor"<?= $role === 'Editor' ? ' selected' : '' ?>>Editor</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Status</label>
-        <select name="status">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
           <option value="Active"<?= $status === 'Active' ? ' selected' : '' ?>>Active</option>
           <option value="Inactive"<?= $status === 'Inactive' ? ' selected' : '' ?>>Inactive</option>
         </select>
       </div>
-      <button class="btn" type="submit">Update Admin</button>
-      <a href="/scheme_/admin/user/index.php" class="back-btn">Back</a>
+      <button class="btn btn-primary" type="submit">Update Admin</button>
+      <a href="/scheme_/admin/user/index.php" class="btn btn-secondary ms-2">Back</a>
     </form>
   </div>
+</div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/script.js"></script>
 </body>

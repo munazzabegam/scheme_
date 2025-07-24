@@ -13,18 +13,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$name || !$email || !$password) {
         $error = 'Name, Email, and Password are required.';
     } else {
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $conn->prepare("INSERT INTO Admins (Name, Email, PasswordHash, Role, Status) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param('sssss', $name, $email, $passwordHash, $formRole, $status);
-        if ($stmt->execute()) {
-            $stmt->close();
-            $conn->close();
-            header('Location: /scheme_/admin/user/index.php?added=1');
-            exit;
+        // Check for duplicate email
+        $checkStmt = $conn->prepare("SELECT AdminID FROM Admins WHERE Email = ? LIMIT 1");
+        $checkStmt->bind_param('s', $email);
+        $checkStmt->execute();
+        $checkStmt->store_result();
+        if ($checkStmt->num_rows > 0) {
+            $error = 'Admin with this email already exists.';
+            $checkStmt->close();
         } else {
-            $error = 'Failed to add admin.';
+            $checkStmt->close();
+            $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare("INSERT INTO Admins (Name, Email, PasswordHash, Role, Status) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param('sssss', $name, $email, $passwordHash, $formRole, $status);
+            if ($stmt->execute()) {
+                $stmt->close();
+                $conn->close();
+                header('Location: /scheme_/admin/user/index.php?added=1');
+                exit;
+            } else {
+                $error = 'Failed to add admin.';
+            }
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
 $conn->close();
@@ -150,19 +161,7 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
   </style>
 </head>
 <body>
-<div class="sidebar-premium">
-  <div class="sidebar-title"><i class="fa-regular fa-gem"></i> Admin Panel</div>
-  <nav>
-    <a href="/scheme_/admin/dashboard/index.php"><i class="fa-regular fa-chart-bar"></i> Dashboard</a>
-    <a href="/scheme_/admin/user/index.php" class="active"><i class="fa-regular fa-user"></i> Users</a>
-    <a href="/scheme_/admin/customers/index.php"><i class="fa-regular fa-users"></i> Customers</a>
-    <a href="/scheme_/admin/payments/index.php"><i class="fa-regular fa-credit-card"></i> Payments</a>
-    <a href="/scheme_/admin/schemes/index.php"><i class="fa-regular fa-gift"></i> Schemes</a>
-    <a href="/scheme_/admin/installments/index.php"><i class="fa-regular fa-coins"></i> Installments</a>
-    <a href="/scheme_/admin/logout.php"><i class="fa-regular fa-sign-out-alt"></i> Logout</a>
-  </nav>
-  <div class="sidebar-footer">&copy; <?php echo date('Y'); ?> Scheme Admin</div>
-</div>
+<?php include __DIR__ . '/../components/sidebar.php'; ?>
 <div class="main-container">
   <div class="profile-chip">
     <i class="fa-regular fa-user-circle"></i> <?= htmlspecialchars($role) ?>

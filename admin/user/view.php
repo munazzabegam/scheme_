@@ -31,15 +31,21 @@ $conn->close();
   <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="title">Admin Details</div>
+<?php include __DIR__ . '/../components/sidebar.php'; ?>
+<div class="main-container">
+  <div class="profile-chip">
+    <i class="fa-regular fa-user-circle"></i>
+  </div>
+  <div class="form-title"><i class="fa fa-user"></i> Admin Details</div>
+  <div class="card-form" style="background:#fff; border-radius:16px; box-shadow:0 8px 32px 0 rgba(2,0,36,0.08); padding:32px;">
     <div class="info-row"><span class="label">Name:</span> <span class="value"><?= htmlspecialchars($name) ?></span></div>
     <div class="info-row"><span class="label">Email:</span> <span class="value"><?= htmlspecialchars($email) ?></span></div>
     <div class="info-row"><span class="label">Role:</span> <span class="value"><?= htmlspecialchars($role) ?></span></div>
     <div class="info-row"><span class="label">Status:</span> <span class="value"><?= htmlspecialchars($status) ?></span></div>
     <div class="info-row"><span class="label">Created At:</span> <span class="value"><?= date('M d, Y', strtotime($created)) ?></span></div>
-    <a href="/scheme_/admin/user/index.php" class="back-btn">Back</a>
+    <a href="/scheme_/admin/user/index.php" class="btn btn-secondary">Back</a>
   </div>
+</div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/script.js"></script>
 </body>

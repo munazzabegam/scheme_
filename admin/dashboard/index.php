@@ -1,10 +1,16 @@
 <?php
-// Example: fetch counts from database if available
-$adminCount = isset($adminCount) ? $adminCount : 3;
-$customerCount = isset($customerCount) ? $customerCount : 1;
-$paymentCount = isset($paymentCount) ? $paymentCount : 0;
-$schemeCount = isset($schemeCount) ? $schemeCount : 4;
-$installmentCount = isset($installmentCount) ? $installmentCount : 0;
+include_once '../../config/database.php';
+
+// Fetch live stats
+$adminCount = $conn->query('SELECT COUNT(*) FROM Admins')->fetch_row()[0];
+$customerCount = $conn->query('SELECT COUNT(*) FROM Customers')->fetch_row()[0];
+$paymentCount = $conn->query('SELECT COUNT(*) FROM Payments')->fetch_row()[0];
+$schemeCount = $conn->query('SELECT COUNT(*) FROM Schemes')->fetch_row()[0];
+$notificationCount = $conn->query('SELECT COUNT(*) FROM Notifications')->fetch_row()[0];
+$winnerCount = $conn->query('SELECT COUNT(*) FROM Winners')->fetch_row()[0];
+$backupCount = $conn->query('SELECT COUNT(*) FROM backup')->fetch_row()[0];
+$paymentQRCount = $conn->query('SELECT COUNT(*) FROM PaymentQR')->fetch_row()[0];
+
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : 'admin@gmail.com';
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
 ?>
@@ -128,10 +134,42 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
       color: #bfc9da;
       font-size: 0.95rem;
     }
+    .topbar-premium {
+      background: #16213e;
+      color: #fff;
+      padding: 20px 32px;
+      border-radius: 12px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .topbar-premium h2 {
+      margin-bottom: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .topbar-premium i {
+      font-size: 1.8rem;
+      color: #4f8cff;
+    }
     @media (max-width: 900px) {
       .main-container { margin-left: 0; padding: 12px 2px; }
       .dashboard-cards { flex-direction: column; gap: 18px; }
       .profile-chip { position: static; margin-bottom: 18px; }
+      .topbar-premium {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
+      }
+      .topbar-premium h2 {
+        font-size: 1.5rem;
+      }
+      .topbar-premium i {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -141,34 +179,69 @@ $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
   <div class="profile-chip">
     <i class="fa-regular fa-user-circle"></i> <?= htmlspecialchars($role) ?>
   </div>
-  <div class="welcome">Welcome back, <?= htmlspecialchars($email) ?></div>
-  <div class="dashboard-cards">
-    <div class="dashboard-card">
-      <div class="card-title">Admins</div>
-      <div class="card-number"><?= $adminCount ?></div>
-      <div class="card-desc">Total Admins</div>
+  <div class="topbar-premium mb-4">
+    <h2><i class="fa-solid fa-gauge-high"></i> Dashboard</h2>
+  </div>
+  <div class="row g-4 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-user-shield"></i> Admins</div>
+        <div class="card-number"><?= $adminCount ?></div>
+        <div class="card-desc">Total Admins</div>
+      </div>
     </div>
-    <div class="dashboard-card">
-      <div class="card-title">Customers</div>
-      <div class="card-number"><?= $customerCount ?></div>
-      <div class="card-desc">Total Customers</div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-users"></i> Customers</div>
+        <div class="card-number"><?= $customerCount ?></div>
+        <div class="card-desc">Total Customers</div>
+      </div>
     </div>
-    <div class="dashboard-card">
-      <div class="card-title">Payments</div>
-      <div class="card-number"><?= $paymentCount ?></div>
-      <div class="card-desc">Total Payments</div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-credit-card"></i> Payments</div>
+        <div class="card-number"><?= $paymentCount ?></div>
+        <div class="card-desc">Total Payments</div>
+      </div>
     </div>
-    <div class="dashboard-card">
-      <div class="card-title">Schemes</div>
-      <div class="card-number"><?= $schemeCount ?></div>
-      <div class="card-desc">Total Schemes</div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-layer-group"></i> Schemes</div>
+        <div class="card-number"><?= $schemeCount ?></div>
+        <div class="card-desc">Total Schemes</div>
+      </div>
     </div>
-    <div class="dashboard-card">
-      <div class="card-title">Installments</div>
-      <div class="card-number"><?= $installmentCount ?></div>
-      <div class="card-desc">Total Installments</div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-bell"></i> Notifications</div>
+        <div class="card-number"><?= $notificationCount ?></div>
+        <div class="card-desc">Total Notifications</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-trophy"></i> Winners</div>
+        <div class="card-number"><?= $winnerCount ?></div>
+        <div class="card-desc">Total Winners</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-database"></i> Backups</div>
+        <div class="card-number"><?= $backupCount ?></div>
+        <div class="card-desc">Total Backups</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-6">
+      <div class="dashboard-card text-center">
+        <div class="card-title"><i class="fa-solid fa-qrcode"></i> Payment QR</div>
+        <div class="card-number"><?= $paymentQRCount ?></div>
+        <div class="card-desc">Payment QR Codes</div>
+      </div>
     </div>
   </div>
+  <!-- You can add more dashboard widgets, recent activity, or summary tables here -->
 </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html> 

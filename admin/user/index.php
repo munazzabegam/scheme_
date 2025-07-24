@@ -10,6 +10,35 @@ $search = isset($search) ? $search : '';
 if (!isset($result)) {
     $result = false;
 }
+include_once '../../config/database.php';
+
+$status_filter = $_GET['status'] ?? 'All';
+$search = trim($_GET['search'] ?? '');
+$where = [];
+$params = [];
+$types = '';
+
+if ($status_filter && $status_filter !== 'All') {
+    $where[] = 'Status = ?';
+    $params[] = $status_filter;
+    $types .= 's';
+}
+if ($search) {
+    $where[] = '(Name LIKE ? OR Email LIKE ? OR Role LIKE ? OR Status LIKE ?)';
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $types .= 'ssss';
+}
+$where_sql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+$sql = "SELECT * FROM Admins $where_sql ORDER BY CreatedAt DESC";
+$stmt = $conn->prepare($sql);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -141,26 +170,13 @@ if (!isset($result)) {
   </style>
 </head>
 <body>
-<div class="sidebar-premium">
-  <div class="sidebar-title"><i class="fa-regular fa-gem"></i> Admin Panel</div>
-  <nav>
-    <a href="/scheme_/admin/dashboard/index.php"><i class="fa-regular fa-chart-bar"></i> Dashboard</a>
-    <a href="/scheme_/admin/user/index.php" class="active"><i class="fa-regular fa-user"></i> Users</a>
-    <a href="/scheme_/admin/customers/index.php"><i class="fa-regular fa-users"></i> Customers</a>
-    <a href="/scheme_/admin/payments/index.php"><i class="fa-regular fa-credit-card"></i> Payments</a>
-    <a href="/scheme_/admin/schemes/index.php"><i class="fa-regular fa-gift"></i> Schemes</a>
-    <a href="/scheme_/admin/installments/index.php"><i class="fa-regular fa-coins"></i> Installments</a>
-    <a href="/scheme_/admin/logout.php"><i class="fa-regular fa-sign-out-alt"></i> Logout</a>
-  </nav>
-  <div class="sidebar-footer">&copy; <?php echo date('Y'); ?> Scheme Admin</div>
-</div>
+<?php include __DIR__ . '/../components/sidebar.php'; ?>
 <div class="main-container">
   <div class="profile-chip">
     <i class="fa-regular fa-user-circle"></i> <?= htmlspecialchars($role) ?>
   </div>
-  <div class="welcome">Welcome back, <?= htmlspecialchars($email) ?></div>
-  <div class="user-header">
-    <h2><i class="fa-regular fa-user"></i> Users</h2>
+  <div class="topbar-premium mb-4">
+    <h2><i class="fa-solid fa-user-shield"></i> Users</h2>
     <div class="action-btns">
       <a href="add.php" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add New Admin</a>
     </div>
@@ -191,35 +207,37 @@ if (!isset($result)) {
         <div class="alert alert-success">Admin added successfully!</div>
       <?php elseif (isset($_GET['deleted'])): ?>
         <div class="alert alert-success">Admin deleted successfully!</div>
+      <?php elseif (isset($_GET['edited'])): ?>
+        <div class="alert alert-success">Admin updated successfully!</div>
       <?php endif; ?>
       <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
           <thead class="table-light">
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Created At</th>
-              <th>Actions</th>
+              <th class="text-center">Name</th>
+              <th class="text-center">Email</th>
+              <th class="text-center">Role</th>
+              <th class="text-center">Status</th>
+              <th class="text-center">Created At</th>
+              <th class="text-center">Actions</th>
             </tr>
           </thead>
           <tbody>
           <?php if ($result && $result->num_rows > 0): ?>
             <?php while($row = $result->fetch_assoc()): ?>
               <tr>
-                <td><?= htmlspecialchars($row['Name']) ?></td>
-                <td><?= htmlspecialchars($row['Email']) ?></td>
-                <td><?= htmlspecialchars($row['Role']) ?></td>
-                <td>
+                <td class="text-center"><?= htmlspecialchars($row['Name']) ?></td>
+                <td class="text-center"><?= htmlspecialchars($row['Email']) ?></td>
+                <td class="text-center"><?= htmlspecialchars($row['Role']) ?></td>
+                <td class="text-center">
                   <?php if ($row['Status'] === 'Active'): ?>
                     <span class="status-active">Active</span>
                   <?php else: ?>
                     <span class="status-inactive">Inactive</span>
                   <?php endif; ?>
                 </td>
-                <td><?= date('M d, Y', strtotime($row['CreatedAt'])) ?></td>
-                <td>
+                <td class="text-center"><?= date('M d, Y', strtotime($row['CreatedAt'])) ?></td>
+                <td class="text-end">
                   <div class="action-btn-group">
                     <a href="view.php?id=<?= $row['AdminID'] ?>" class="action-btn" title="View"><i class="fa fa-eye"></i></a>
                     <a href="edit.php?id=<?= $row['AdminID'] ?>" class="action-btn edit" title="Edit"><i class="fa fa-edit"></i></a>
