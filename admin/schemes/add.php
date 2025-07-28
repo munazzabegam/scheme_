@@ -3,6 +3,69 @@
 include_once '../../config/database.php';
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : 'admin@gmail.com';
 $role = isset($_SESSION['role']) ? $_SESSION['role'] : 'SuperAdmin';
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $schemeName = trim($_POST['schemeName'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $monthlyPayment = floatval($_POST['monthlyPayment'] ?? 0);
+    $totalPayments = intval($_POST['totalPayments'] ?? 0);
+    $status = 'Active'; // Default status
+    $schemeImageURL = null;
+
+    // Handle scheme image upload
+    if (isset($_FILES['schemeImage']) && $_FILES['schemeImage']['error'] === UPLOAD_ERR_OK) {
+        $imgTmp = $_FILES['schemeImage']['tmp_name'];
+        $imgName = basename($_FILES['schemeImage']['name']);
+        $targetDir = __DIR__ . '/../uploads/schemes/';
+        if (!is_dir($targetDir)) { mkdir($targetDir, 0777, true); }
+        $targetFileName = uniqid('scheme_') . '_' . $imgName;
+        $targetPath = $targetDir . $targetFileName;
+        if (move_uploaded_file($imgTmp, $targetPath)) {
+            $schemeImageURL = '/admin/uploads/schemes/' . $targetFileName;
+        }
+    }
+
+    // Insert scheme
+    $stmt = $conn->prepare("INSERT INTO Schemes (SchemeName, SchemeImageURL, Description, MonthlyPayment, TotalPayments, Status) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssdis', $schemeName, $schemeImageURL, $description, $monthlyPayment, $totalPayments, $status);
+    if ($stmt->execute()) {
+        $schemeID = $stmt->insert_id;
+        $stmt->close();
+        // Handle installments
+        if (isset($_POST['installments']) && is_array($_POST['installments'])) {
+            foreach ($_POST['installments'] as $i => $inst) {
+                $instName = trim($inst['name'] ?? '');
+                $instNumber = intval($inst['number'] ?? 0);
+                $instAmount = floatval($inst['amount'] ?? 0);
+                $instDrawDate = $inst['draw_date'] ?? null;
+                $instBenefits = trim($inst['benefits'] ?? '');
+                $isRepayable = isset($inst['is_repayable']) ? 1 : 0;
+                $instImageURL = null;
+                // Handle installment image upload
+                if (isset($_FILES['installments']['name'][$i]['image']) && $_FILES['installments']['error'][$i]['image'] === UPLOAD_ERR_OK) {
+                    $imgTmp = $_FILES['installments']['tmp_name'][$i]['image'];
+                    $imgName = basename($_FILES['installments']['name'][$i]['image']);
+                    $targetDir = __DIR__ . '/../uploads/installments/';
+                    if (!is_dir($targetDir)) { mkdir($targetDir, 0777, true); }
+                    $targetFileName = uniqid('inst_') . '_' . $imgName;
+                    $targetPath = $targetDir . $targetFileName;
+                    if (move_uploaded_file($imgTmp, $targetPath)) {
+                        $instImageURL = '/admin/uploads/installments/' . $targetFileName;
+                    }
+                }
+                $stmt2 = $conn->prepare("INSERT INTO Installments (SchemeID, InstallmentName, InstallmentNumber, Amount, DrawDate, Benefits, ImageURL, Status) VALUES (?, ?, ?, ?, ?, ?, ?, 'Pending')");
+                $stmt2->bind_param('isidsss', $schemeID, $instName, $instNumber, $instAmount, $instDrawDate, $instBenefits, $instImageURL);
+                $stmt2->execute();
+                $stmt2->close();
+            }
+        }
+        header('Location: index.php?added=1');
+        exit;
+    } else {
+        $error = 'Failed to add scheme.';
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">

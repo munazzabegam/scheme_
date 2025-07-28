@@ -112,6 +112,48 @@ $result = $stmt->get_result();
       margin-left: 250px;
       padding: 48px 32px 32px 32px;
     }
+    .filter-section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px 0 rgba(0,0,0,0.06);
+      border: 1px solid #e5e7eb;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .filter-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2d3a4b;
+      margin-bottom: 10px;
+    }
+    .btn-apply-filters {
+      background: #003399;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 10px 20px;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .btn-apply-filters:hover {
+      background: #002266;
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(0,51,153,0.3);
+    }
+    .btn-clear-filters {
+      background: #6c757d;
+      color: #fff;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 10px 20px;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .btn-clear-filters:hover {
+      background: #5a6268;
+      color: #fff;
+      box-shadow: 0 4px 16px 0 rgba(108,117,125,0.3);
+    }
     .welcome {
       font-size: 1.1rem;
       color: #7b7f87;
@@ -181,10 +223,11 @@ $result = $stmt->get_result();
       <a href="add.php" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add New Admin</a>
     </div>
   </div>
-  <div class="card mb-4 shadow-sm">
-    <div class="card-body">
-      <form class="row g-3 align-items-end mb-3" method="get">
-        <div class="col-md-3">
+  <div class="filter-section">
+    <div class="filter-title"><i class="fa fa-filter me-2"></i>Filter Users</div>
+    <form method="get" action="">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-2">
           <label class="form-label">Status</label>
           <select name="status" class="form-select">
             <option value="All"<?= $status_filter === 'All' ? ' selected' : '' ?>>All Status</option>
@@ -192,17 +235,31 @@ $result = $stmt->get_result();
             <option value="Inactive"<?= $status_filter === 'Inactive' ? ' selected' : '' ?>>Inactive</option>
           </select>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-4">
           <label class="form-label">Search</label>
-          <input type="text" name="search" class="form-control" placeholder="Search by name, email, role, or status..." value="<?= htmlspecialchars($search) ?>" />
+          <input type="text" name="search" class="form-control" placeholder="Search by name, email, role, or status..." value="<?= htmlspecialchars($search) ?>">
         </div>
         <div class="col-md-2">
-          <button class="btn btn-outline-primary w-100" type="submit"><i class="fa fa-filter"></i> Apply Filters</button>
+          <label class="form-label">Date From</label>
+          <input type="date" name="date_from" class="form-control" value="<?= htmlspecialchars($_GET['date_from'] ?? '') ?>">
         </div>
         <div class="col-md-2">
-          <a href="index.php" class="btn btn-sm ms-2" style="background:transparent !important; color:inherit; border:1px solid #ccc;"><i class="fa fa-times"></i> Clear Filters</a>
+          <label class="form-label">Date To</label>
+          <input type="date" name="date_to" class="form-control" value="<?= htmlspecialchars($_GET['date_to'] ?? '') ?>">
         </div>
-      </form>
+        <div class="col-md-2">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-apply-filters flex-fill">
+              <i class="fa fa-filter me-1"></i> Apply
+            </button>
+            <a href="index.php" class="btn btn-clear-filters">
+              <i class="fa fa-times me-1"></i> Clear
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
       <?php if (isset($_GET['added'])): ?>
         <div class="alert alert-success">Admin added successfully!</div>
       <?php elseif (isset($_GET['deleted'])): ?>

@@ -80,29 +80,18 @@ CREATE TABLE PaymentReceipts (
     FOREIGN KEY (IssuedBy) REFERENCES Admins(AdminID) ON DELETE SET NULL
 );
 
--- schemes
 CREATE TABLE Schemes (
     SchemeID INT AUTO_INCREMENT PRIMARY KEY,
     SchemeName VARCHAR(255) NOT NULL,
+    SchemeImageURL VARCHAR(255),
     Description TEXT,
-    EligibilityCriteria TEXT,
+    MonthlyPayment DECIMAL(10,2) NOT NULL,
+    TotalPayments INT NOT NULL,
     StartDate DATE,
-    EndDate DATE,
     Status ENUM('Active', 'Closed', 'Upcoming') DEFAULT 'Active',
-    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- installment plans
-CREATE TABLE InstallmentPlans (
-    PlanID INT AUTO_INCREMENT PRIMARY KEY,
-    SchemeID INT NOT NULL,
-    TotalInstallments INT NOT NULL,
-    AmountPerInstallment DECIMAL(10,2) NOT NULL,
-    Frequency ENUM('Monthly', 'Quarterly', 'Yearly') DEFAULT 'Monthly',
-    StartAfterDays INT DEFAULT 0,
-    FOREIGN KEY (SchemeID) REFERENCES Schemes(SchemeID) ON DELETE CASCADE
-);
 
 -- Scheme Enrollment
 CREATE TABLE CustomerSchemeEnrollments (
@@ -115,21 +104,19 @@ CREATE TABLE CustomerSchemeEnrollments (
     FOREIGN KEY (SchemeID) REFERENCES Schemes(SchemeID) ON DELETE CASCADE
 );
 
--- installments
 CREATE TABLE Installments (
     InstallmentID INT AUTO_INCREMENT PRIMARY KEY,
-    EnrollmentID INT NOT NULL,
+    SchemeID INT NOT NULL,
+    InstallmentName VARCHAR(255),
     InstallmentNumber INT NOT NULL,
-    DueDate DATE NOT NULL,
     Amount DECIMAL(10,2) NOT NULL,
-    PaidDate DATE,
-    Status ENUM('Pending', 'Paid', 'Overdue') DEFAULT 'Pending',
-    PaymentMethod ENUM('UPI', 'Card', 'NetBanking', 'Cash', 'Wallet'),
-    TransactionID VARCHAR(100),
-    Notes TEXT,
-    FOREIGN KEY (EnrollmentID) REFERENCES CustomerSchemeEnrollments(EnrollmentID) ON DELETE CASCADE
+    DrawDate DATE,
+    Benefits TEXT,
+    ImageURL VARCHAR(255),
+    Status ENUM('Pending', 'Paid', 'Overdue', 'Drawn') DEFAULT 'Pending',
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (SchemeID) REFERENCES Schemes(SchemeID) ON DELETE CASCADE
 );
-
 -- notification
 CREATE TABLE Notifications (
     NotificationID INT AUTO_INCREMENT PRIMARY KEY,
